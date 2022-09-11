@@ -1,14 +1,22 @@
 import styled from 'styled-components';
-import NxWelcome from './nx-welcome';
+import { AppContainer } from './AppContainer';
 
 const StyledApp = styled.div`
-  // Your style here
+  html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+  html, body, #root {
+    height: 100%;
+  }
 `;
 
 export function App() {
   return (
     <StyledApp>
-      <NxWelcome title="trello" />
+      <AppContainer />
     </StyledApp>
   );
 }

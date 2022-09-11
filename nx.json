@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "react-monorepo-study",
+  "npmScope": "mono-front-apps",
   "affected": {
     "defaultBase": "main"
   },

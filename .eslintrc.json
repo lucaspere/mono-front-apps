@@ -24,7 +24,7 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript"],
-      "rules": {}
+      "rules": {"ban-types": "off"}
     },
     {
       "files": ["*.js", "*.jsx"],
