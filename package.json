@@ -10,12 +10,14 @@
   "private": true,
   "dependencies": {
     "core-js": "^3.6.5",
+    "nanoid": "^4.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-is": "18.2.0",
     "regenerator-runtime": "0.13.7",
     "styled-components": "5.3.5",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "use-immer": "^0.7.0"
   },
   "devDependencies": {
     "@nrwl/cli": "14.7.3",

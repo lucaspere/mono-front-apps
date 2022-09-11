@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { AppContainer } from './AppContainer';
+import { AppStateProvider } from '../state/AppStateContext';
 
 const StyledApp = styled.div`
   html {
@@ -15,9 +16,11 @@ const StyledApp = styled.div`
 
 export function App() {
   return (
-    <StyledApp>
-      <AppContainer />
-    </StyledApp>
+    <AppStateProvider>
+      <StyledApp>
+        <AppContainer />
+      </StyledApp>
+    </AppStateProvider>
   );
 }
 
