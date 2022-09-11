@@ -1,0 +1,8 @@
+{
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json",
+  "version": 2,
+  "projects": {
+    "trello": "apps/trello",
+    "trello-e2e": "apps/trello-e2e"
+  }
+}
