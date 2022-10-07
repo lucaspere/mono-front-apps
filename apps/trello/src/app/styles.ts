@@ -4,6 +4,23 @@ type AddItemButtonProps = {
   dark?: boolean;
 };
 
+type DragPreviewWrapperProps = {
+  position: {
+    x: number;
+    y: number;
+  };
+};
+
+interface DragPreviewContainer {
+  isHidden?: boolean;
+  isPreview?: boolean;
+}
+
+export const DragPreviewContainer = styled.div<DragPreviewContainer>`
+  transform: ${(props) => (props.isPreview ? 'rotate(5deg)' : undefined)};
+  opacity: ${(props) => (props.isHidden ? 0.2 : 1)};
+`;
+
 export const StyledAppContainer = styled.div`
   align-items: flex-start;
   background-color: #3179ba;
@@ -14,7 +31,7 @@ export const StyledAppContainer = styled.div`
   width: 100%;
 `;
 
-export const StyledColumnContainer = styled.div`
+export const StyledColumnContainer = styled(DragPreviewContainer)`
   background-color: #ebecf0;
   width: 300px;
   min-height: 40px;
@@ -22,7 +39,6 @@ export const StyledColumnContainer = styled.div`
   border-radius: 3px;
   padding: 8px 8px;
   flex-grow: 0;
-  flex-shrink: 0;
 `;
 
 export const StyledColumnTitle = styled.div`
@@ -30,7 +46,7 @@ export const StyledColumnTitle = styled.div`
   font-weight: bold;
 `;
 
-export const StyledCardContainer = styled.div`
+export const StyledCardContainer = styled(DragPreviewContainer)`
   background-color: #fff;
   cursor: pointer;
   margin-bottom: 0.5rem;
@@ -41,7 +57,7 @@ export const StyledCardContainer = styled.div`
 `;
 
 export const AddItemButton = styled.button<AddItemButtonProps>`
-  background-color: #ffffff3d;
+  background-color: #ffff3d;
   border-radius: 3px;
   border: none;
   color: ${(props) => (props.dark ? '#000' : '#fff')};
@@ -52,7 +68,7 @@ export const AddItemButton = styled.button<AddItemButtonProps>`
   transition: background 85ms ease-in;
   width: 100%;
   &:hover {
-    background-color: #ffffff52;
+    background-color: #ffff52;
   }
 `;
 
@@ -82,3 +98,21 @@ export const NewItemInput = styled.input`
   padding: 0.5rem 1rem;
   width: 100%;
 `;
+
+export const CustomDragLayerContainer = styled.div`
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+`;
+
+export const DragPreviewWrapper = styled.div.attrs<DragPreviewWrapperProps>(
+  ({ position: { x, y } }) => ({
+    style: {
+      transform: `translate(${x}px, ${y}px)`,
+    },
+  })
+)<DragPreviewWrapperProps>``;
