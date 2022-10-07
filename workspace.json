@@ -3,8 +3,6 @@
   "version": 2,
   "projects": {
     "time-logging": "apps/time-logging",
-    "time-logging-e2e": "apps/time-logging-e2e",
-    "trello": "apps/trello",
-    "trello-e2e": "apps/trello-e2e"
+    "trello": "apps/trello"
   }
 }
