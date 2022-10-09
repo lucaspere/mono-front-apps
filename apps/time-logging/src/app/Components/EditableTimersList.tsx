@@ -1,0 +1,28 @@
+import { FC } from 'react';
+import { EditableTimer } from './EditableTimer';
+import { ITimer } from './TimerDashboard';
+
+type EditableTimersListProps = {
+  timers: ITimer[];
+  onFormSubmit: (timer: ITimer) => void;
+};
+
+export const EditableTimersList: FC<EditableTimersListProps> = (props) => {
+  const timers = props.timers.map((timer) => (
+    <EditableTimer
+      onFormSubmit={props.onFormSubmit}
+      key={timer.id}
+      id={timer.id}
+      title={timer.title}
+      project={timer.project}
+      elapsed={timer.elapsed}
+      runningSince={timer.runningSince}
+    />
+  ));
+
+  return (
+    <section id="timers" className="flex flex-col justify-between space-y-4">
+      {timers}
+    </section>
+  );
+};
