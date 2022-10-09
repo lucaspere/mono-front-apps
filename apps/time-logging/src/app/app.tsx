@@ -15,13 +15,23 @@ export function App() {
   );
 }
 
-type Timers = {
+type Timers = Timer & {
+  elapsed: number;
+  runningSince?: number;
+};
+
+type Timer = {
   id: string;
   title: string;
   project: string;
-  elapsed: number;
-  runningSince: number | null;
 };
+
+type TimerFormProps = {
+  id?: string;
+  onFormSubmit: (timer: Timer) => void;
+  onFormClose: () => void;
+};
+
 const TimersDashboard = () => {
   const [timers, setTimers] = useState<Timers[]>([
     {
@@ -36,9 +46,13 @@ const TimersDashboard = () => {
       project: 'Kitchen Chores',
       id: nanoid(),
       elapsed: 1273998,
-      runningSince: null,
     },
   ]);
+
+  const handleFormSubmit = (timer: Timer) => {
+    const t: Timers = !timer.id ? helpers.newTimer(timer) : (timer as Timers);
+    setTimers([...timers, t]);
+  };
 
   return (
     <div className="font-sans box-border max-w-container px-4">
@@ -47,8 +61,11 @@ const TimersDashboard = () => {
           Timers
         </h1>
         <hr className="ring-1 ring-gray-300 border-0" />
-        <EditableTimersList timers={timers} />
-        <ToggleableTimerForm />
+        <EditableTimersList
+          timers={timers}
+          onFormSubmit={() => handleFormSubmit}
+        />
+        <ToggleableTimerForm onFormSubmit={handleFormSubmit} />
       </div>
     </div>
   );
@@ -56,11 +73,13 @@ const TimersDashboard = () => {
 
 type EditableTimersListProps = {
   timers: Timers[];
+  onFormSubmit: (timer: Timer) => void;
 };
 
 const EditableTimersList: FC<EditableTimersListProps> = (props) => {
   const timers = props.timers.map((timer) => (
     <EditableTimer
+      onFormSubmit={props.onFormSubmit}
       key={timer.id}
       id={timer.id}
       title={timer.title}
@@ -81,15 +100,22 @@ type EditableTimerProps = {
   title: string;
   project: string;
   elapsed: number;
-  runningSince: number | null;
+  runningSince?: number;
   id: string;
+  onFormSubmit: (timer: Timer) => void;
 };
 
 const EditableTimer: FC<EditableTimerProps> = (props) => {
   const [editFormOpen, setEditFormOpen] = useState(false);
 
   if (editFormOpen) {
-    return <TimerForm />;
+    return (
+      <TimerForm
+        id={props.id}
+        onFormSubmit={props.onFormSubmit}
+        onFormClose={() => setEditFormOpen(!editFormOpen)}
+      />
+    );
   } else {
     return (
       <Timer
@@ -98,19 +124,24 @@ const EditableTimer: FC<EditableTimerProps> = (props) => {
         project={props.project}
         elapsed={props.elapsed}
         runningSince={props.runningSince}
+        onEditClick={() => setEditFormOpen(!editFormOpen)}
       />
     );
   }
 };
 
-const TimerForm = () => {
+const TimerForm: FC<TimerFormProps> = (props) => {
   const [title, setTitle] = useState('');
   const [project, setProject] = useState('');
 
-  const submitText = title ? 'Update' : 'Create';
+  const submitText = props.id ? 'Update' : 'Create';
 
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    props.onFormSubmit({ title, project, id: props.id! });
+  };
   return (
-    <form className="bg-white shadow-md rounded px-8 pt-4 pb-6 mb-2">
+    <form className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 px-3 pt-4 pb-4 mb-2">
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">
           Title
@@ -134,10 +165,16 @@ const TimerForm = () => {
         />
       </div>
       <div className="flex justify-evenly">
-        <button className="rounded-md border border-indigo-300 bg-white py-2 px-3 text-sm font-medium leading-4 text-indigo-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2">
+        <button
+          onClick={handleSubmit}
+          className="rounded-md border border-indigo-300 bg-white py-2 px-3 text-sm font-medium leading-4 text-indigo-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+        >
           {submitText}
         </button>
-        <button className="rounded-md border border-red-300 bg-white py-2 px-3 text-sm font-medium leading-4 text-red-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2">
+        <button
+          onClick={props.onFormClose}
+          className="rounded-md border border-red-300 bg-white py-2 px-3 text-sm font-medium leading-4 text-red-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+        >
           Cancel
         </button>
       </div>
@@ -145,14 +182,24 @@ const TimerForm = () => {
   );
 };
 
-const ToggleableTimerForm = () => {
+type ToggleableTimerFormProps = {
+  onFormSubmit: (timer: Timer) => void;
+};
+
+const ToggleableTimerForm: FC<ToggleableTimerFormProps> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFormOpen = () => {
     setIsOpen(!isOpen);
   };
 
-  if (isOpen) return <TimerForm />;
+  if (isOpen)
+    return (
+      <TimerForm
+        onFormSubmit={props.onFormSubmit}
+        onFormClose={handleFormOpen}
+      />
+    );
   else
     return (
       <div className="flex justify-center h-14 min-h-fit">
@@ -164,13 +211,13 @@ const ToggleableTimerForm = () => {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
+            strokeWidth="1.5"
             stroke="currentColor"
             className="w-6 h-6"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
@@ -183,8 +230,9 @@ type TimerProps = {
   title: string;
   project: string;
   elapsed: number;
-  runningSince: number | null;
+  runningSince?: number;
   id: string;
+  onEditClick: () => void;
 };
 
 const Timer: FC<TimerProps> = (props) => {
@@ -207,19 +255,23 @@ const Timer: FC<TimerProps> = (props) => {
             {elapsedString}
           </p>
         </div>
-        <div className="flex justify-end mr-2">
+        <div
+          className="flex justify-end mr-2"
+          id="editTimer"
+          onClick={props.onEditClick}
+        >
           <span className="cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
+              strokeWidth="1.5"
               stroke="currentColor"
               className="w-5 h-5"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
               />
             </svg>
@@ -229,13 +281,13 @@ const Timer: FC<TimerProps> = (props) => {
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
+              strokeWidth="1.5"
               stroke="currentColor"
               className="w-5 h-5"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
               />
             </svg>
