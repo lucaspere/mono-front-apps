@@ -6,6 +6,8 @@ import { ITimer } from './TimerDashboard';
 type EditableTimerProps = ITimer & {
   onFormSubmit: (timer: ITimer) => void;
   onDeleteSubmit: (id: string) => void;
+  onStartClick: (id: string) => void;
+  onStopClick: (id: string) => void;
 };
 
 export const EditableTimer: FC<EditableTimerProps> = (props) => {
@@ -34,6 +36,8 @@ export const EditableTimer: FC<EditableTimerProps> = (props) => {
         runningSince={props.runningSince}
         onEditClick={() => setEditFormOpen(!editFormOpen)}
         onDeleteClick={props.onDeleteSubmit}
+        onStartClick={props.onStartClick}
+        onStopClick={props.onStopClick}
       />
     );
   }

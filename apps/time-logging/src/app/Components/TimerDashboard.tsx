@@ -1,5 +1,4 @@
-import { nanoid } from 'nanoid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { helpers } from '../helpers';
 import { EditableTimersList } from './EditableTimersList';
 import { ToggleableTimerForm } from './ToggleableTimerForm';
@@ -15,24 +14,39 @@ export type ITimer = ITimerDescription & {
   runningSince?: number;
 };
 
+const x = setInterval;
 export const TimersDashboard = () => {
-  const [timers, setTimers] = useState<ITimer[]>([
-    {
-      title: 'Practice squat',
-      project: 'Gym Chores',
-      id: nanoid(),
-      elapsed: 5456099,
-      runningSince: Date.now(),
-    },
-    {
-      title: 'Bake squash',
-      project: 'Kitchen Chores',
-      id: nanoid(),
-      elapsed: 1273998,
-    },
-  ]);
+  const [timers, setTimers] = useState<ITimer[]>([]);
 
-  const updateTimer = (values: ITimerDescription) => {
+  const startTimer = (timerId: string) => {
+    const now = Date.now();
+
+    const newTimer = timers.map((timer) =>
+      timer.id === timerId ? { ...timer, runningSince: now } : timer
+    );
+
+    setTimers(newTimer);
+  };
+
+  const stopTimer = (timerId: string) => {
+    const now = Date.now();
+
+    const newTimer = timers.map((timer) => {
+      const lastElapsed = now - timer.runningSince!;
+
+      return timer.id === timerId
+        ? {
+            ...timer,
+            runningSince: undefined,
+            elapsed: timer.elapsed + lastElapsed,
+          }
+        : timer;
+    });
+
+    setTimers(newTimer);
+  };
+
+  const editTimer = (values: ITimerDescription) => {
     const timer = Object.entries(values)
       .filter(([_, v]) => !!v)
       .reduce((timer, [k, v]) => {
@@ -48,7 +62,7 @@ export const TimersDashboard = () => {
   };
 
   const handleFormSubmit = (timer: ITimerDescription) => {
-    if (timer.id) updateTimer(timer);
+    if (timer.id) editTimer(timer);
     else setTimers([...timers, helpers.newTimer(timer)]);
   };
 
@@ -69,6 +83,8 @@ export const TimersDashboard = () => {
           timers={timers}
           onFormSubmit={handleFormSubmit}
           onDeleteSubmit={onDeleteTimer}
+          onStartClick={startTimer}
+          onStopClick={stopTimer}
         />
         <ToggleableTimerForm onFormSubmit={handleFormSubmit} />
       </div>

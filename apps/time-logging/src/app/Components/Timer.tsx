@@ -1,10 +1,13 @@
 import { FC } from 'react';
 import { helpers } from '../helpers';
+import { TimerActionButton } from './TimerActionButton';
 import { ITimer } from './TimerDashboard';
 
 export type TimerProps = ITimer & {
   onEditClick: () => void;
   onDeleteClick: (id: string) => void;
+  onStartClick: (id: string) => void;
+  onStopClick: (id: string) => void;
 };
 
 export const Timer: FC<TimerProps> = (props) => {
@@ -65,9 +68,11 @@ export const Timer: FC<TimerProps> = (props) => {
           </span>
         </div>
       </div>
-      <p className="flex justify-center items-center h-[40px] border-green-500 border-t-2 text-green-600 text-xl cursor-pointer">
-        Start
-      </p>
+      <TimerActionButton
+        onStartClick={() => props.onStartClick(props.id)}
+        onStopClick={() => props.onStopClick(props.id)}
+        timerIsRunning={!!props.runningSince}
+      />
     </div>
   );
 };

@@ -6,6 +6,8 @@ type EditableTimersListProps = {
   timers: ITimer[];
   onFormSubmit: (timer: ITimer) => void;
   onDeleteSubmit: (id: string) => void;
+  onStartClick: (id: string) => void;
+  onStopClick: (id: string) => void;
 };
 
 export const EditableTimersList: FC<EditableTimersListProps> = (props) => {
@@ -19,6 +21,8 @@ export const EditableTimersList: FC<EditableTimersListProps> = (props) => {
       project={timer.project}
       elapsed={timer.elapsed}
       runningSince={timer.runningSince}
+      onStartClick={props.onStartClick}
+      onStopClick={props.onStopClick}
     />
   ));
 
