@@ -13,12 +13,14 @@ export const ToggleableTimerForm: FC<ToggleableTimerFormProps> = (props) => {
     setIsOpen(!isOpen);
   };
 
+  const handleFormSubmit = (timer: ITimer) => {
+    setIsOpen(!isOpen);
+    props.onFormSubmit(timer);
+  };
+
   if (isOpen)
     return (
-      <TimerForm
-        onFormSubmit={props.onFormSubmit}
-        onFormClose={handleFormOpen}
-      />
+      <TimerForm onFormSubmit={handleFormSubmit} onFormClose={handleFormOpen} />
     );
   else
     return (

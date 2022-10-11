@@ -32,9 +32,30 @@ export const TimersDashboard = () => {
     },
   ]);
 
-  const handleFormSubmit = (timer: ITimer) => {
-    const t: ITimer = !timer.id ? helpers.newTimer(timer) : (timer as ITimer);
-    setTimers([...timers, t]);
+  const updateTimer = (values: ITimerDescription) => {
+    const timer = Object.entries(values)
+      .filter(([_, v]) => !!v)
+      .reduce((timer, [k, v]) => {
+        timer[k as keyof ITimerDescription] = v;
+        return timer;
+      }, {} as ITimerDescription);
+
+    const newTimer = timers.map((t) =>
+      t.id === timer.id ? { ...t, ...timer } : t
+    );
+
+    setTimers(newTimer);
+  };
+
+  const handleFormSubmit = (timer: ITimerDescription) => {
+    if (timer.id) updateTimer(timer);
+    else setTimers([...timers, helpers.newTimer(timer)]);
+  };
+
+  const onDeleteTimer = (id: string) => {
+    const timer = timers.filter((timer) => timer.id !== id);
+
+    setTimers(timer);
   };
 
   return (
@@ -46,7 +67,8 @@ export const TimersDashboard = () => {
         <hr className="ring-1 ring-gray-300 border-0" />
         <EditableTimersList
           timers={timers}
-          onFormSubmit={() => handleFormSubmit}
+          onFormSubmit={handleFormSubmit}
+          onDeleteSubmit={onDeleteTimer}
         />
         <ToggleableTimerForm onFormSubmit={handleFormSubmit} />
       </div>

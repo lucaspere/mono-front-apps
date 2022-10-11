@@ -4,6 +4,7 @@ import { ITimer } from './TimerDashboard';
 
 export type TimerProps = ITimer & {
   onEditClick: () => void;
+  onDeleteClick: (id: string) => void;
 };
 
 export const Timer: FC<TimerProps> = (props) => {
@@ -26,12 +27,8 @@ export const Timer: FC<TimerProps> = (props) => {
             {elapsedString}
           </p>
         </div>
-        <div
-          className="flex justify-end mr-2"
-          id="editTimer"
-          onClick={props.onEditClick}
-        >
-          <span className="cursor-pointer">
+        <div className="flex justify-end mr-2" id="editTimer">
+          <span className="cursor-pointer" onClick={props.onEditClick}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -47,7 +44,10 @@ export const Timer: FC<TimerProps> = (props) => {
               />
             </svg>
           </span>
-          <span className="cursor-pointer">
+          <span
+            className="cursor-pointer"
+            onClick={() => props.onDeleteClick(props.id)}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
