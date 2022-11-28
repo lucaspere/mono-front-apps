@@ -2,6 +2,8 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
+    "audio-api": "apps/audio-api",
+    "audio-api-e2e": "apps/audio-api-e2e",
     "time-logging": "apps/time-logging",
     "trello": "apps/trello"
   }
